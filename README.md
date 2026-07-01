@@ -1,36 +1,62 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Advanced Next.js 16 + Tailwind v4 Production Boilerplate
+
+A cutting-edge, production-ready starter kit built on top of Next.js 16 (App Router) and React 19, 
+features full static internationalization (next-intl), Tailwind CSS v4, and the native React Compiler.
+
+## Tech Stack & Features
+
+* Framework: Next.js 16 (App Router) + React 19
+* Internationalization: next-intl
+* Styling: Tailwind CSS v4 (with @tailwindcss/postcss) + prettier-plugin-tailwindcss
+* Performance: Native React Compiler enabled (babel-plugin-react-compiler)
+* Animations: motion (Framer Motion v12) + tw-animate-css
+* Forms & Validation: react-hook-form + @hookform/resolvers + zod
+* Icons: lucide-react
+
+---
 
 ## Getting Started
 
-First, run the development server:
-
+### 1. Installation
+Clone the repository and install the dependencies using Bun:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+bun install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Development Server
+Run the local server with Next.js Turbopack enabled for blazingly fast hot-reloads:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+bun run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Open http://localhost:3000 in your browser.
 
-## Learn More
+### 3. Production Build
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+bun run build
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Project Structure & i18n Architecture
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+This boilerplate separates translation dictionaries from the application source code and centralizes routing configuration inside the `src/i18n` directory.
 
-## Deploy on Vercel
+```text
+.
+├── messages/               # Translation dictionaries (JSON files)
+│   ├── en.json             # English translations
+│   └── uk.json             # Ukrainian translations
+└── src/
+    ├── app/
+    │   └── [locale]/       # Dynamic locale routing group
+    │       ├── layout.tsx  # Root layout managing i18n providers
+    │       ├── page.tsx    # Synchronous Home page template
+    │       └── ssg/
+    │           └── page.tsx # Asynchronous SSG page template
+    └── i18n/               # Core internationalization setup
+        ├── routing.ts      # Locale definition
+        ├── navigation.ts   # Type-safe routing wrappers (Link, useRouter)
+        └── request.ts      # Server-side message compilation configuration
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
