@@ -7,7 +7,7 @@ import "../globals.css";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { getMessages, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
-import { routing } from "@/i18n/routing";
+import { getStaticLocaleParams, routing } from "@/i18n/routing";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
  * defined in `routing.ts` (e.g., creating physical static paths for /uk and /en).
  */
 export function generateStaticParams() {
-  return routing.locales.map((locale) => ({ locale }));
+  return getStaticLocaleParams();
 }
 
 export default async function RootLayout({

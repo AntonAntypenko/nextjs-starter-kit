@@ -1,5 +1,6 @@
-import Link from "next/link"; // Always import Link from your custom navigation
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { Link } from "@/i18n/navigation";
+import { getStaticLocaleParams } from "@/i18n/routing";
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -7,30 +8,64 @@ type Props = {
 
 /**
  * STATIC SITE GENERATION (SSG) PAGE TEMPLATE
- * * Use this structure for all Server Component pages inside the `[locale]` dynamic segment
- * to ensure they are compiled into fast, static HTML files during `npm run build`.
- * * CRITICAL RULES FOR THIS TEMPLATE:
- * 1. Must use `async/await` because `params` are asynchronous in Next.js 15/16.
- * 2. Must call `setRequestLocale(locale)` at the very top to lock the static context for this page.
- * 3. Must use `await getTranslations("Namespace")` instead of `useTranslations` to satisfy server execution and ESLint.
- * 4. Must use localized `<Link>` from `@/i18n/navigation` to maintain the current language on transition.
+ * -----------------------------------------------------------------------------
+ * Use this structure for fully static, SEO-critical Server Component pages
+ * inside the `[locale]` dynamic segment to ensure pre-rendering at build time.
+ *
+ * CRITICAL ARCHITECTURAL RULES:
+ * 1. MANDATORY `generateStaticParams`:
+ *    Must export `generateStaticParams` to enumerate all locales. Without it,
+ *    Next.js will default to dynamic rendering (ISR/SSR) instead of pure SSG.
+ *
+ * 2. `setRequestLocale(locale)` EXECUTION:
+ *    Must be called at the top of the component tree before any async operations
+ *    or `getTranslations` to lock the static context for `next-intl`.
+ *
+ * 3. ASYNCHRONOUS PARAMS & TRANSLATIONS:
+ *    - `params` is a Promise in Next.js 15/16 and MUST be awaited: `const { locale } = await params`.
+ *    - Uses `await getTranslations("Namespace")` for async server-side translation fetching.
+ *
+ * 4. MANDATORY LOCALIZED NAVIGATION:
+ *    Always import `Link` from `@/i18n/navigation` (NEVER from `next/link`).
+ *    Native `next/link` bypasses locale injection, triggering 307 redirects via middleware
+ *    and breaking Next.js link prefetching.
+ *
+ * 5. COMPONENT NAMING CONVENTION:
+ *    Always name the exported component `Page` to match Next.js App Router conventions.
  */
+
+export function generateStaticParams() {
+  return getStaticLocaleParams();
+}
+
 export default async function Page({ params }: Props) {
-  // Wait for the async URL parameters to resolve the current language
   const { locale } = await params;
 
-  // Crucial for SSG: Informs Next.js which locale this specific static HTML chunk belongs to
+  // Locks the locale context for static generation
   setRequestLocale(locale);
 
-  // Fetch translations directly from the server's file system (messages/[locale].json)
   const t = await getTranslations("SSGPage");
 
   return (
-    <div>
-      <h1>{t("title")}</h1>
+    <main className="flex min-h-screen flex-col items-center justify-center p-8 text-center">
+      <div className="max-w-md space-y-4 rounded-xl border border-gray-200 bg-white p-8 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+        <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">
+          {t("title")}
+        </h1>
 
-      {/* Localized navigation automatically prepends the current /locale to the href */}
-      <Link href={"/"}>Back</Link>
-    </div>
+        <p className="text-sm text-gray-600 dark:text-gray-400">
+          {t("description")}
+        </p>
+
+        <div className="pt-2">
+          <Link
+            href="/"
+            className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus-visible:outline-2 focus-visible:outline-blue-600 dark:bg-blue-500 dark:hover:bg-blue-600"
+          >
+            {t("back")}
+          </Link>
+        </div>
+      </div>
+    </main>
   );
 }

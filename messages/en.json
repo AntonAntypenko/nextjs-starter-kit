@@ -1,8 +1,12 @@
 {
   "HomePage": {
-    "title": "Hello world!"
+    "title": "Home Page",
+    "description": "Basic template for a lightweight synchronous Server Component. Ideal for pages that do not require complex async data fetching.",
+    "goToSsg": "Go to SSG Page"
   },
   "SSGPage": {
-    "title": "SSG page"
+    "title": "SSG Page",
+    "description": "This page is statically generated during the project build (Build Time). It provides maximum loading speed and SEO efficiency.",
+    "back": "Back to Home"
   }
 }

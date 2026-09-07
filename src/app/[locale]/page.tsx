@@ -2,29 +2,48 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 
 /**
- * CLIENT-FRIENDLY OR SIMPLE SERVER COMPONENT TEMPLATE
- * * This page represents a clean, lightweight component structure.
- * * CRITICAL RULES FOR THIS TEMPLATE:
- * 1. Synchronous execution: No `async/await` required if you don't need to read async `params` on this level.
- * 2. Next-intl compliance: Uses `useTranslations("Namespace")` which safely works on BOTH Server and Client components.
- * 3. Navigation: Always utilizes the localized `<Link>` to automatically preserve `/uk` or `/en` route prefixes.
+ * CLIENT-COMPATIBLE PAGE TEMPLATE
+ * -----------------------------------------------------------------------------
+ * Use this structure for lightweight pages or entrypoints that do not perform
+ * direct async data fetching or read route `params` at the top level.
+ *
+ * CRITICAL ARCHITECTURAL RULES:
+ * 1. UNIVERSAL `useTranslations` HOOK:
+ *    Uses `useTranslations("Namespace")` which safely works across BOTH Server (RSC)
+ *    and Client Components without requiring async server calls.
+ *
+ * 2. MANDATORY LOCALIZED NAVIGATION:
+ *    Always import `Link` from `@/i18n/navigation` (NEVER from `next/link`).
+ *    Native `next/link` bypasses locale injection, triggering 307 redirects via middleware
+ *    and breaking Next.js link prefetching.
+ *
+ * 3. COMPONENT NAMING CONVENTION:
+ *    Always name the exported component `Page` to match Next.js App Router conventions.
  */
-export default function Home() {
-  // 1 Initialize the translation hook using the predefined JSON namespace
+export default function Page() {
+  // Synchronous translation hook for static/sync contexts
   const t = useTranslations("HomePage");
 
   return (
-    <div className="p-8 space-y-4">
-      {/* 2 Render translated text injected directly from the message files */}
-      <h1 className="text-2xl font-bold">{t("title")}</h1>
+    <main className="flex min-h-screen flex-col items-center justify-center p-8 text-center">
+      <div className="max-w-md space-y-4 rounded-xl border border-gray-200 bg-white p-8 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+        <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">
+          {t("title")}
+        </h1>
 
-      {/* 3 Localized link navigation: safely routes the user to our complex SSG page */}
-      <Link
-        href="/ssg"
-        className="inline-block px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
-      >
-        Go to SSG Page
-      </Link>
-    </div>
+        <p className="text-sm text-gray-600 dark:text-gray-400">
+          {t("description")}
+        </p>
+
+        <div className="pt-2">
+          <Link
+            href="/ssg"
+            className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus-visible:outline-2 focus-visible:outline-blue-600 dark:bg-blue-500 dark:hover:bg-blue-600"
+          >
+            {t("goToSsg")}
+          </Link>
+        </div>
+      </div>
+    </main>
   );
 }

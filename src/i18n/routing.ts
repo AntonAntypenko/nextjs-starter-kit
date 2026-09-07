@@ -26,3 +26,13 @@ export const routing = defineRouting({
   // Used when no locale matches (e.g. on /about)
   defaultLocale: "uk",
 });
+
+/**
+ * ARCHITECTURE DECISION: Centralized Static Locale Parameter Generator
+ * -------------------------------------------------------------------
+ * Returns an array of parameter objects for `generateStaticParams` in App Router.
+ * Centralizes the locale mapping logic to maintain a Single Source of Truth.
+ */
+export function getStaticLocaleParams() {
+  return routing.locales.map((locale) => ({ locale }));
+}
